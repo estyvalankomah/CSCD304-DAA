@@ -1,5 +1,17 @@
 #include <iostream>
+#include <cstdlib>
+#include <sys/time.h>
+#include <ctime>
+#include <fstream>
 using namespace std;
+
+void genRandInput(int arr[],int n){
+	int i;
+	srand(time(NULL));
+	for(i = 0; i < n; i++){
+		arr[i] = rand() % 100;
+	}
+}
 
 void merge(int arr[], int low, int mid, int high){
 	int num1, num2, i, j, k;
@@ -48,25 +60,39 @@ void mergeSort(int arr[], int low, int high){
 }
 
 int main(){
+	ofstream fp;
+	struct timeval tv;
+	double dStart, dEnd;
 	int n;
 
-	cout << "Enter array size : " ;
-	cin >> n;
+	fp.open("mergePlot.dat");
 
-	int arr[n];
+	for(int i = 0; i < 6; i++){
+		cout << "\nEnter number of elements to be sorted\n";
+		cin >> n;
+
+		int arr[n];
+		genRandInput(arr,n);
+		gettimeofday(&tv, NULL);
+		dStart = tv.tv_sec + (tv.tv_usec / 1000000.0);
+		mergeSort(arr, 0, n - 1);
+		gettimeofday(&tv, NULL);
+		dEnd = tv.tv_sec + (tv.tv_usec / 1000000.0);
+
+		fp << n << "\t";
+		fp << (dEnd - dStart) << "\n";
+
+		cout << "\nSorted elements : ";
+
+		for(int j = 0; j < n; j++){
+			cout << arr[j] << " ";
+		}
+	}
+
+	fp.close();
 	
-	for(int i = 0; i < n; i++){
-		cout << "\nEnter element " << (i + 1) << ": ";
-		cin >> arr[i];
-	}
-
-	mergeSort(arr, 0, n - 1);
-
-	cout << "\nSorted elements : ";
-
-	for(int j = 0; j < n; j++){
-		cout << arr[j] << " ";
-	}
+	cout << "\nData file generated and stored in file <mergePlot.dat>";
+	
 	
 	cout << "\n";
 
